@@ -196,11 +196,10 @@
         </button>
     </div>
 
-    <!-- YouTube music player; browsers enable sound after the first interaction. -->
-    <iframe id="youtubePlayer" width="1" height="1"
-            src="https://www.youtube.com/embed/Oihk6ii0Gbs?enablejsapi=1&autoplay=1&mute=1&loop=1&playlist=Oihk6ii0Gbs&controls=0"
-            title="Background music" allow="autoplay" class="fixed -left-[9999px] opacity-0 pointer-events-none"></iframe>
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- Background Audio Element -->
+    <audio id="bgAudio" loop preload="auto" autoplay>
+        <source src="https://github.com/saadskylen-hash/clorix-py/releases/download/v1.0.0/The.mountain.doesn.t.change.You.do.The.Climber.Playlist.mp3" type="audio/mpeg">
+    </audio>
 
     <main class="glass-card w-full max-w-md rounded-[2.5rem] p-8 text-center relative z-10 my-8">
         
@@ -256,7 +255,7 @@
     </main>
 
     <script>
-        let youtubePlayer;
+        const bgAudio = document.getElementById('bgAudio');
         const musicText = document.getElementById('musicText');
         const musicIcon = document.getElementById('musicIcon');
         const eqBars = document.getElementById('eqBars');
@@ -270,33 +269,21 @@
         }
 
         function startAudioAfterInteraction() {
-            if (!youtubePlayer) return;
-            youtubePlayer.unMute();
-            youtubePlayer.playVideo();
-            setAudioPlayingState(true);
-            document.removeEventListener('pointerdown', startAudioAfterInteraction);
+            bgAudio.play().then(() => {
+                setAudioPlayingState(true);
+                document.removeEventListener('pointerdown', startAudioAfterInteraction);
+            }).catch(() => {});
         }
 
         document.addEventListener('pointerdown', startAudioAfterInteraction);
-
-        function onYouTubeIframeAPIReady() {
-            youtubePlayer = new YT.Player('youtubePlayer', {
-                events: {
-                    onStateChange: event => {
-                        if (event.data === YT.PlayerState.PLAYING) setAudioPlayingState(true);
-                        if (event.data === YT.PlayerState.PAUSED) setAudioPlayingState(false);
-                    }
-                }
-            });
-        }
+        bgAudio.addEventListener('play', () => setAudioPlayingState(true));
+        bgAudio.addEventListener('pause', () => setAudioPlayingState(false));
 
         function toggleAudio() {
-            if (!youtubePlayer) return;
-            if (youtubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
-                youtubePlayer.pauseVideo();
+            if (bgAudio.paused) {
+                bgAudio.play().then(() => setAudioPlayingState(true)).catch(() => {});
             } else {
-                youtubePlayer.unMute();
-                youtubePlayer.playVideo();
+                bgAudio.pause();
             }
         }
     </script>
