@@ -196,10 +196,11 @@
         </button>
     </div>
 
-    <!-- Background Audio Element -->
-    <audio id="bgAudio" loop preload="auto" autoplay>
-        <source src="OldyGotTheSound, @Anysmusic & Shaw - TAF TAF (Visualizer).mp3" type="audio/mpeg">
-    </audio>
+    <!-- YouTube music player; browsers enable sound after the first interaction. -->
+    <iframe id="youtubePlayer" width="1" height="1"
+            src="https://www.youtube.com/embed/Oihk6ii0Gbs?enablejsapi=1&autoplay=1&mute=1&loop=1&playlist=Oihk6ii0Gbs&controls=0"
+            title="Background music" allow="autoplay" class="fixed -left-[9999px] opacity-0 pointer-events-none"></iframe>
+    <script src="https://www.youtube.com/iframe_api"></script>
 
     <main class="glass-card w-full max-w-md rounded-[2.5rem] p-8 text-center relative z-10 my-8">
         
@@ -255,7 +256,7 @@
     </main>
 
     <script>
-        const bgAudio = document.getElementById('bgAudio');
+        let youtubePlayer;
         const musicText = document.getElementById('musicText');
         const musicIcon = document.getElementById('musicIcon');
         const eqBars = document.getElementById('eqBars');
@@ -268,25 +269,34 @@
             eqBars.classList.toggle('paused', !isPlaying);
         }
 
-        // Browsers may block autoplay with sound until the first user interaction.
         function startAudioAfterInteraction() {
-            bgAudio.play().then(() => {
-                setAudioPlayingState(true);
-            }).catch(() => {});
+            if (!youtubePlayer) return;
+            youtubePlayer.unMute();
+            youtubePlayer.playVideo();
+            setAudioPlayingState(true);
+            document.removeEventListener('pointerdown', startAudioAfterInteraction);
         }
 
-        document.addEventListener('pointerdown', startAudioAfterInteraction, { once: true });
-        bgAudio.addEventListener('play', () => setAudioPlayingState(true));
-        bgAudio.addEventListener('pause', () => setAudioPlayingState(false));
+        document.addEventListener('pointerdown', startAudioAfterInteraction);
 
-        // Toggle Audio Play / Pause Function
+        function onYouTubeIframeAPIReady() {
+            youtubePlayer = new YT.Player('youtubePlayer', {
+                events: {
+                    onStateChange: event => {
+                        if (event.data === YT.PlayerState.PLAYING) setAudioPlayingState(true);
+                        if (event.data === YT.PlayerState.PAUSED) setAudioPlayingState(false);
+                    }
+                }
+            });
+        }
+
         function toggleAudio() {
-            if (bgAudio.paused) {
-                bgAudio.play().then(() => {
-                    setAudioPlayingState(true);
-                }).catch(() => {});
+            if (!youtubePlayer) return;
+            if (youtubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                youtubePlayer.pauseVideo();
             } else {
-                bgAudio.pause();
+                youtubePlayer.unMute();
+                youtubePlayer.playVideo();
             }
         }
     </script>
