@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clorix.py | Personal Bio & Links</title>
+    
+    <!-- External CSS & Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #050508;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Video Background Wrapper */
+        .video-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .video-bg-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Overlay to darken video for readability */
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(5, 5, 8, 0.85) 0%, rgba(15, 23, 42, 0.75) 100%);
+            z-index: -1;
+            backdrop-filter: blur(3px);
+        }
+
+        /* Glassmorphism card effect */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Neon Text Glow */
+        .neon-text {
+            text-shadow: 0 0 12px rgba(139, 92, 246, 0.6), 
+                         0 0 24px rgba(6, 182, 212, 0.4);
+            letter-spacing: 0.02em;
+        }
+
+        .brand-name::after {
+            content: '_';
+            color: #22d3ee;
+            animation: blinkCursor 1s steps(2, start) infinite;
+        }
+
+        @keyframes blinkCursor {
+            50% { opacity: 0; }
+        }
+
+        /* Profile Picture Glow Effect */
+        .profile-glow {
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.5),
+                        0 0 50px rgba(6, 182, 212, 0.3);
+            animation: pulseGlow 4s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
+            100% { box-shadow: 0 0 35px rgba(167, 139, 250, 0.8); }
+        }
+
+        /* Link Buttons Base Style */
+        .link-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Instagram Button Magic */
+        .btn-insta {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            z-index: 1;
+        }
+        .btn-insta::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(45deg, #bc1888 0%, #cc2366 25%, #dc2743 50%, #e6683c 75%, #f09433 100%);
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+        .btn-insta:hover::before { opacity: 1; }
+        .btn-insta:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(220, 39, 67, 0.45);
+        }
+
+        /* TikTok Button Magic */
+        .btn-tiktok {
+            background-color: rgba(17, 17, 17, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .btn-tiktok:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: -4px 4px 20px rgba(0, 242, 254, 0.5), 
+                         4px -4px 20px rgba(254, 9, 121, 0.5);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        .tiktok-icon {
+            filter: drop-shadow(2px 0px 0px #fe0979) drop-shadow(-2px 0px 0px #00f2fe);
+        }
+
+        /* Audio Music Toggle Floating Button */
+        .audio-control-btn {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+        .audio-control-btn:hover {
+            transform: scale(1.08);
+            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Equalizer Animation Bars for Audio Playing State */
+        .eq-bar {
+            width: 3px;
+            background-color: #a855f7;
+            border-radius: 2px;
+            animation: eqBounce 1.2s infinite ease-in-out alternate;
+        }
+        .eq-bar:nth-child(1) { height: 12px; animation-delay: 0.1s; }
+        .eq-bar:nth-child(2) { height: 18px; animation-delay: 0.3s; }
+        .eq-bar:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+
+        @keyframes eqBounce {
+            0% { transform: scaleY(0.3); }
+            100% { transform: scaleY(1.1); }
+        }
+
+        .paused .eq-bar {
+            animation-play-state: paused;
+            transform: scaleY(0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 relative">
+
+    <div class="video-bg-container">
+        <!-- Replace video source URL with your own .mp4 video link if needed -->
+        <video autoplay loop muted playsinline id="bgVideo">
+            <source src="bmw-m4-night-rain-drift.1920x1080.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+    </div>
+    
+    <!-- Dark Glass Layer over video -->
+    <div class="video-overlay"></div>
+
+    <div class="fixed top-5 right-5 z-50">
+        <button id="musicToggleBtn" onclick="toggleAudio()" 
+                class="audio-control-btn flex items-center gap-3 px-4 py-2.5 rounded-full text-white cursor-pointer shadow-lg group">
+            
+            <!-- Dynamic Soundwave Icon -->
+            <div id="eqBars" class="flex items-center gap-1 h-5 paused">
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+            </div>
+
+            <span id="musicText" class="text-xs font-semibold tracking-wider text-slate-300 group-hover:text-white transition-colors">
+                Play Music
+            </span>
+
+            <i id="musicIcon" class="fa-solid fa-music text-purple-400 group-hover:rotate-12 transition-transform"></i>
+        </button>
+    </div>
+
+    <!-- Background Audio Element -->
+    <audio id="bgAudio" loop preload="auto" autoplay>
+        <source src="OldyGotTheSound, @Anysmusic & Shaw - TAF TAF (Visualizer).mp3" type="audio/mpeg">
+    </audio>
+
+    <main class="glass-card w-full max-w-md rounded-[2.5rem] p-8 text-center relative z-10 my-8">
+        
+        <!-- Profile Picture Container -->
+        <div class="relative w-32 h-32 mx-auto mb-6">
+              <img src="https://i.pinimg.com/736x/3c/70/4f/3c704f87f0a1971157a4c695665a4d24.jpg" 
+                  alt="Clorix.py cartoon avatar" 
+                 class="w-full h-full object-cover rounded-full border-4 border-slate-900 profile-glow">
+            
+            <!-- Live Status Badge -->
+            <div class="absolute bottom-1 right-2 w-5 h-5 bg-emerald-500 rounded-full border-4 border-slate-900 shadow-[0_0_12px_#10b981]" title="Online"></div>
+        </div>
+
+        <!-- Bio Information -->
+        <h1 class="brand-name text-3xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-400 to-fuchsia-400 neon-text">
+            Clorix.py
+        </h1>
+        <p class="text-slate-300 text-sm font-medium mb-8 px-2 leading-relaxed">
+            Digital Content Creator 🚀 <br> 
+            Welcome to my official bio space!
+        </p>
+
+        <!-- Social Links Stack -->
+        <div class="flex flex-col gap-4 w-full">
+            
+            <!-- Instagram Link Button -->
+            <a href="https://www.instagram.com/sinco__999/" target="_blank" rel="noopener noreferrer" 
+               class="link-btn btn-insta w-full py-4 px-6 rounded-2xl flex items-center justify-between text-white font-semibold text-lg group">
+                <div class="flex items-center gap-4">
+                    <i class="fa-brands fa-instagram text-2xl group-hover:scale-110 transition-transform"></i>
+                    <span>Instagram</span>
+                </div>
+                <i class="fa-solid fa-chevron-right text-sm opacity-70 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+
+            <!-- TikTok Link Button -->
+            <a href="https://www.tiktok.com/@sincoo001" target="_blank" rel="noopener noreferrer" 
+               class="link-btn btn-tiktok w-full py-4 px-6 rounded-2xl flex items-center justify-between text-white font-semibold text-lg group">
+                <div class="flex items-center gap-4">
+                    <i class="fa-brands fa-tiktok text-2xl tiktok-icon group-hover:scale-110 transition-transform"></i>
+                    <span>TikTok</span>
+                </div>
+                <i class="fa-solid fa-chevron-right text-sm opacity-70 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-10 opacity-60 text-xs font-semibold tracking-widest text-slate-400">
+            <p>&copy; 2026 CLORIX.PY. ALL RIGHTS RESERVED.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        const bgAudio = document.getElementById('bgAudio');
+        const musicText = document.getElementById('musicText');
+        const musicIcon = document.getElementById('musicIcon');
+        const eqBars = document.getElementById('eqBars');
+
+        function setAudioPlayingState(isPlaying) {
+            musicText.innerText = isPlaying ? "Pause Music" : "Play Music";
+            musicIcon.className = isPlaying
+                ? "fa-solid fa-pause text-purple-400"
+                : "fa-solid fa-music text-purple-400";
+            eqBars.classList.toggle('paused', !isPlaying);
+        }
+
+        // Browsers may block autoplay with sound until the first user interaction.
+        function startAudioAfterInteraction() {
+            bgAudio.play().then(() => {
+                setAudioPlayingState(true);
+            }).catch(() => {});
+        }
+
+        document.addEventListener('pointerdown', startAudioAfterInteraction, { once: true });
+        bgAudio.addEventListener('play', () => setAudioPlayingState(true));
+        bgAudio.addEventListener('pause', () => setAudioPlayingState(false));
+
+        // Toggle Audio Play / Pause Function
+        function toggleAudio() {
+            if (bgAudio.paused) {
+                bgAudio.play().then(() => {
+                    setAudioPlayingState(true);
+                }).catch(() => {});
+            } else {
+                bgAudio.pause();
+            }
+        }
+    </script>
+</body>
+</html>
